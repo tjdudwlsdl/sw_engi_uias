@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.team8.LocationUtil;
 import com.team8.Meta_DB;
+import com.team8.SecurityUtil;
 
 /**
  * Servlet implementation class SignupHandler
@@ -24,6 +26,7 @@ import com.team8.Meta_DB;
 @WebServlet("/SignupHandler")
 public class SignupHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Object lock = new Object();
 	
 	private Connection conn;
 	private PreparedStatement pstmt;
@@ -47,9 +50,9 @@ public class SignupHandler extends HttpServlet {
     				sc.getInitParameter("dbUser"), 
     				sc.getInitParameter("dbPassword"));
     		pstmt = conn.prepareStatement(String.format(
-    				"INSERT INTO %s (%s, %s, %s, %s) VALUES (?,?,?,?)",
+    				"INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (?,?,m?,?,?)",
     				Meta_DB.tb_member, Meta_DB.col_mbID, Meta_DB.col_mbHashPasswd,
-    				Meta_DB.col_mbLocation, Meta_DB.col_mbLocationCode));
+    				Meta_DB.col_mbSalt, Meta_DB.col_mbLocation, Meta_DB.col_mbLocalcode));
     		
     	}
     	catch(ClassNotFoundException e) {
@@ -59,13 +62,22 @@ public class SignupHandler extends HttpServlet {
     		throw new UnavailableException("Couldn't get db connection");
     	}
     }
+    
+    @Override
+    public void destroy() {
+    	super.destroy();
+    	try {
+    		if(conn != null)
+    			conn.close();
+    	}
+    	catch (SQLException ignore) { }
+    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 	}
 
 	/**
@@ -73,11 +85,29 @@ public class SignupHandler extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String userID = request.getParameter("userID");
+		String userID = request.getParameter("userID");		// mb_id
 		String password = request.getParameter("password");
-		String location = request.getParameter("location");
+		String salt = SecurityUtil.createSalt(); 	// mb_salt
+		String hashedpswd = SecurityUtil.encryptSHA256(password+salt);	//mb_password
 		
+		String location = request.getParameter("location");	// mb_location
+		String[] locals = location.split(" ");
+		String localCode = LocationUtil.getLocationCode(locals[0], locals[1], locals[2]);	// mb_localcode
 		
+		try {
+			synchronized (lock) {
+				pstmt.clearParameters();
+				pstmt.setString(1, userID);
+				pstmt.setString(2, hashedpswd);
+				pstmt.setString(3, salt);
+				pstmt.setString(4, location);
+				pstmt.setString(5, localCode);
+				pstmt.executeUpdate();
+			}
+		}
+		catch(Exception e) {
+			
+		}
 	}
 
 }

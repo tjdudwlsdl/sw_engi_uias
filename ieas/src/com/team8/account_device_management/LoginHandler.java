@@ -137,7 +137,7 @@ public class LoginHandler extends HttpServlet {
 			synchronized (lock) {
 				// 유저 ID 존재 여부 확인
 				check_signed_pstmt.clearParameters();
-				check_signed_pstmt.setString(0, userID);
+				check_signed_pstmt.setString(1, userID);
 				rs = check_signed_pstmt.executeQuery();
 				if(rs.next()) {
 					mb_no = rs.getInt(Meta_DB.col_mbKey);
@@ -154,7 +154,7 @@ public class LoginHandler extends HttpServlet {
 				
 				// 로그인 여부 확인
 				check_login_pstmt.clearParameters();
-				check_login_pstmt.setInt(0, mb_no);
+				check_login_pstmt.setInt(1, mb_no);
 				rs = check_login_pstmt.executeQuery();
 				if(rs.next()) {
 					
