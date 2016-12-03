@@ -4,21 +4,20 @@ import java.io.InputStreamReader;
 
 // DB 테이블 생성 등 초기 설치 작업을 진행합니다.
 public class IEAS_install {
-	private static final String COMMAND_FORMAT = "mysql -u %s -p %s %s < /res/ieas.sql";
+	private static final String COMMAND_FORMAT = "mysql -u %s --password=%s < ieas.sql";
 	
 	public static void main(String[] args) {
-		if (args.length != 3) {
-			System.out.println("Usage : IEAS_install [id] [password] [dbName]");
+		if (args.length != 2) {
+			System.out.println("Usage : IEAS_install {rootID} {password}");
 			return;
 		}
 		
 		String id = args[0];
 		String password = args[1];
-		String dbName = args[2];
 		
 		Runtime runtime = Runtime.getRuntime();
 		try {
-			Process process = runtime.exec(String.format(COMMAND_FORMAT, id, password, dbName));
+			Process process = runtime.exec(String.format(COMMAND_FORMAT, id, password));
 			
 			InputStreamReader isr=null;
 			BufferedReader br=null;

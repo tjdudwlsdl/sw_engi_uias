@@ -43,13 +43,10 @@ public class IndoorDataCollector extends HttpServlet {
     @Override
     public void init() throws ServletException {
     	super.init();
-    	ServletContext sc = getServletContext();
     	try {
-    		Class.forName(sc.getInitParameter("driver"));
+    		Class.forName(Meta_DB.driver);
     		conn = DriverManager.getConnection(
-    				sc.getInitParameter("dbURL"), 
-    				sc.getInitParameter("dbUser"), 
-    				sc.getInitParameter("dbPassword"));
+    				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		sensor_pstmt = conn.prepareStatement(String.format(
     				"INSERT INTO %s VALUES (?,?,?,?,?,?)", Meta_DB.tb_SensorData));
     	}

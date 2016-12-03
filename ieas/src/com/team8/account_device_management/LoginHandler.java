@@ -38,6 +38,7 @@ public class LoginHandler extends HttpServlet {
 	private PreparedStatement check_login_pstmt;
 	private PreparedStatement login_pstmt;
 	private final Object lock = new Object();
+	
 
     /**
      * Default constructor. 
@@ -49,13 +50,10 @@ public class LoginHandler extends HttpServlet {
     @Override
     public void init() throws ServletException {
     	super.init();
-    	ServletContext sc = getServletContext();
     	try {
-    		Class.forName(sc.getInitParameter("driver"));
+    		Class.forName(Meta_DB.driver);
     		conn = DriverManager.getConnection(
-    				sc.getInitParameter("dbURL"), 
-    				sc.getInitParameter("dbUser"), 
-    				sc.getInitParameter("dbPassword"));
+    				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		check_signed_pstmt = conn.prepareStatement(String.format(
     				"SELECT %s FROM %s WHERE %s=?",
     				Meta_DB.col_mbKey, Meta_DB.tb_member, Meta_DB.col_mbID));
@@ -88,7 +86,6 @@ public class LoginHandler extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -42,13 +42,10 @@ public class SignupHandler extends HttpServlet {
     @Override
     public void init() throws ServletException {
     	super.init();
-    	ServletContext sc = getServletContext();
     	try {
-    		Class.forName(sc.getInitParameter("driver"));
+    		Class.forName(Meta_DB.driver);
     		conn = DriverManager.getConnection(
-    				sc.getInitParameter("dbURL"), 
-    				sc.getInitParameter("dbUser"), 
-    				sc.getInitParameter("dbPassword"));
+    				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		pstmt = conn.prepareStatement(String.format(
     				"INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (?,?,m?,?,?)",
     				Meta_DB.tb_member, Meta_DB.col_mbID, Meta_DB.col_mbHashPasswd,
