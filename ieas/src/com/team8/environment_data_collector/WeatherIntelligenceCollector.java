@@ -9,11 +9,11 @@ import org.jdom2.input.SAXBuilder;
 
 // 기상 정보 수집을 위한 클래스입니다.
 public class WeatherIntelligenceCollector {
-	private static final String RSSURL = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=";
+	private static final String RSSURL_FORMAT = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=";
 	
 	public static Weather getRecentWeather(String localcode) {
 		try {
-			URL url = new URL(RSSURL+localcode);
+			URL url = new URL(RSSURL_FORMAT+localcode);
 			
 			Document doc = new SAXBuilder().build(url);
 			

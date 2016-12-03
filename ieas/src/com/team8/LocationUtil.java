@@ -12,16 +12,16 @@ import org.json.simple.JSONValue;
 // 기상청 RSS활용을 위한 장소/지역코드 유틸리티 클래스입니다.
 public class LocationUtil {
 	private static final String TOP_URL = "http://www.kma.go.kr/DFSROOT/POINT/DATA/top.json.txt";
-	private static final String MDL_URL = "http://www.kma.go.kr/DFSROOT/POINT/DATA/mdl.%s.json.txt";
-	private static final String LEAF_URL = "http://www.kma.go.kr/DFSROOT/POINT/DATA/leaf.%s.json.txt";
+	private static final String MDL_URL_FORMAT = "http://www.kma.go.kr/DFSROOT/POINT/DATA/mdl.%s.json.txt";
+	private static final String LEAF_URL_FORMAT = "http://www.kma.go.kr/DFSROOT/POINT/DATA/leaf.%s.json.txt";
 	
 	// 주어진 장소 정보로부터 지역 코드를 가져옵니다.
 	public static String getLocationCode(String top, String mid, String leaf) {
 		String code = "";
 		try {
 			code = getLocalCode(TOP_URL, top);
-			code = getLocalCode(String.format(MDL_URL, code), mid);
-			code = getLocalCode(String.format(LEAF_URL, code), leaf);
+			code = getLocalCode(String.format(MDL_URL_FORMAT, code), mid);
+			code = getLocalCode(String.format(LEAF_URL_FORMAT, code), leaf);
 			return code;
 		}
 		catch (Exception e) {
@@ -36,12 +36,12 @@ public class LocationUtil {
 	
 	// 시/군/구 선택을 위한 리스트르 가져옵니다.
 	public static String[] getMdlLocationList(String local) {
-		return getLocationList(String.format(MDL_URL, local));
+		return getLocationList(String.format(MDL_URL_FORMAT, local));
 	}
 	
 	// 동/읍/면 선택을 위한 리스트를 가져옵니다.
 	public static String[] getLeafLocationList(String local) {
-		return getLocationList(String.format(LEAF_URL, local));
+		return getLocationList(String.format(LEAF_URL_FORMAT, local));
 	}
 	
 	// 주어진 URL로부터 장소 리스트를 가져옵니다.
