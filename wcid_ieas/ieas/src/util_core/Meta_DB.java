@@ -14,6 +14,7 @@ public class Meta_DB {
 	public static final String col_mbSalt = "mb_salt";
 	public static final String col_mbLocation = "mb_location";
 	public static final String col_mbLocalcode = "mb_localcode";
+	public static final String col_mbAuto = "mb_auto";
 	
 	public static final String tb_device = "ieas_device";
 	public static final String col_dvKey = "dv_no";
@@ -27,4 +28,10 @@ public class Meta_DB {
 	
 	public static final String tb_schedule = "ieas_schedule";
 	public static final String col_scAct = "sc_act";
+	
+	public static final String tb_reservation = "ieas_reservation";
+	public static final String col_rsID = "rs_id";
+	public static final String col_rsActDate = "rs_act_date";
+	public static final String col_rsActTime = "rs_act_time";
+	public static final String col_rsAct = "rs_act";
 }

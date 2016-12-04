@@ -100,10 +100,10 @@ CREATE TABLE IF NOT EXISTS ieas_schedule (
 
 DROP TABLE IF EXISTS ieas_reservation;
 CREATE TABLE IF NOT EXISTS ieas_reservation (
-	rs_no int NOT NULL auto_increment,
+	rs_id int NOT NULL auto_increment,
 	rs_act_date date NOT NULL default '0000-00-00',
 	rs_act_time time NOT NULL default '00:00:00',
-	mb_no int(11) NOT NULL default -1,
+	mb_id varchar(20) NOT NULL default '',
 	rs_act tinyint(4) NOT NULL default 0,
 	PRIMARY KEY (rs_no)
 ) DEFAULT CHARSET=utf8;

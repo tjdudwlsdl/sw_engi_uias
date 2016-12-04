@@ -25,8 +25,7 @@ import util_core.Meta_DB;
 @WebServlet("/IndoorDataCollector")
 public class IndoorDataCollector extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Object sensor_lock = new Object();
-	private static final Object controller_lock = new Object();
+	private static final Object lock = new Object();
 
 	private Connection conn;
 	private PreparedStatement sensor_pstmt;
@@ -86,7 +85,7 @@ public class IndoorDataCollector extends HttpServlet {
 				Double reh = Double.parseDouble(request.getParameter("reh"));
 				Double co2 = Double.parseDouble(request.getParameter("co2"));
 				
-				synchronized (sensor_lock) {
+				synchronized (lock) {
 					sensor_pstmt.clearParameters();
 					sensor_pstmt.setDate(1, dateTime.getDate());
 					sensor_pstmt.setTime(2, dateTime.getTime());
@@ -108,7 +107,7 @@ public class IndoorDataCollector extends HttpServlet {
 			try {
 				int state = Integer.parseInt(request.getParameter("state"));
 				
-				synchronized (controller_lock) {
+				synchronized (lock) {
 					controller_pstmt.clearParameters();
 					controller_pstmt.setDate(1, dateTime.getDate());
 					controller_pstmt.setTime(2, dateTime.getTime());

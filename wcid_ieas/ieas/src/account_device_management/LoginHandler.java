@@ -94,7 +94,7 @@ public class LoginHandler extends HttpServlet {
 		// user의 유효성 체크
 		if(!allowUser(userID, password)) {
 			RequestDispatcher rd = request.getRequestDispatcher(Meta_Page.LOGINPAGE);
-			request.setAttribute("result", "Login Failed.");
+			request.setAttribute("message", "Login Failed.");
 			rd.forward(request, response);
 		}
 		else {

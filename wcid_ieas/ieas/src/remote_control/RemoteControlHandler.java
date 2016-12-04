@@ -29,8 +29,7 @@ import util_core.Meta_Page;
 @WebServlet("/RemoteControlHandler")
 public class RemoteControlHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Object getlock = new Object();
-	private static final Object postlock = new Object();
+	private static final Object lock = new Object();
 	
 	private Connection conn;
 	private PreparedStatement getdv_pstmt;
@@ -87,7 +86,7 @@ public class RemoteControlHandler extends HttpServlet {
 		try {
 			String dv_id = request.getParameter("id");
 			PrintWriter pw = response.getWriter();
-			synchronized(getlock) {
+			synchronized(lock) {
 				getcomm_pstmt.clearParameters();
 				getcomm_pstmt.setString(1, dv_id);
 				ResultSet rs = getcomm_pstmt.executeQuery();
@@ -109,17 +108,17 @@ public class RemoteControlHandler extends HttpServlet {
 
 	// 원격 제어 명령을 입력합니다.
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		
+		HttpSession session = request.getSession(true);
+    	String userID = (String)session.getAttribute("Logon.isDone");
+    	if(userID==null) {
+    		response.sendRedirect(String.format("%s://%s:%d%s", 
+    				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
+    		return;
+    	}
+    	
+    	// 입력된 명령을 가져와 schedule 테이블에 저장
 		try {
-			
-			HttpSession session = request.getSession(true);
-	    	
-	    	String userID = (String)session.getAttribute("Logon.isDone");
-	    	if(userID==null) {
-	    		response.sendRedirect(String.format("%s://%s:%d%s", 
-	    				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
-	    		return;
-	    	}
 			int act;
 			if(request.getParameter("act").equals("open"))
 				act = 100;
@@ -128,7 +127,7 @@ public class RemoteControlHandler extends HttpServlet {
 			DateTime dt = new DateTime("Asia/Seoul");
 			
 			
-			synchronized (postlock) {
+			synchronized (lock) {
 				getdv_pstmt.clearParameters();
 				getdv_pstmt.setString(1, userID);
 				ResultSet rs = getdv_pstmt.executeQuery();
@@ -149,7 +148,7 @@ public class RemoteControlHandler extends HttpServlet {
 		}
 		catch(Exception e) { }
 		
-		RequestDispatcher rd = request.getRequestDispatcher(Meta_Page.REMOTEPAGE);
+		RequestDispatcher rd = request.getRequestDispatcher(Meta_Page.MAINPAGE);
 		rd.forward(request, response);
 		
 		
