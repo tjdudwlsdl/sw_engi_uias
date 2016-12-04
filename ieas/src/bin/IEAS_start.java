@@ -3,8 +3,12 @@ package bin;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Timer;
 
 import javax.management.monitor.MonitorSettingException;
+
+import environment_data_analyzer.AnalysisTask;
+import environment_data_collector.WeatherCollectionTask;
 
 // IEAS 기능들을 실행합니다.
 public class IEAS_start {
@@ -36,6 +40,11 @@ public class IEAS_start {
 			System.exit(0);
 		}
 		
+		Timer weatherCollect = new Timer();
+		Timer analyzer = new Timer();
+		
+		weatherCollect.schedule(new WeatherCollectionTask(), 0, WeatherCollectionTask.INTERVAL);
+		analyzer.schedule(new AnalysisTask(), AnalysisTask.INTERVAL);
 		
 		System.out.println("ieas start.");
 		// 종료 명령 대기
@@ -58,6 +67,8 @@ public class IEAS_start {
 		} 
 		finally {
 			try {
+				weatherCollect.cancel();
+				analyzer.cancel();
 				close();
 			} catch(Exception ignore) { }
 		}

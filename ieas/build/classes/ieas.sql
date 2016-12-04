@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS ieas_member (
 	mb_salt varchar(255) NOT NULL default '',
 	mb_location text NOT NULL,
 	mb_localcode varchar(20) NOT NULL default '0000000000',
+	mb_auto tinyint(4) NOT NULL default 1,
 	PRIMARY KEY (mb_no),
 	UNIQUE KEY mb_id (mb_id)
 ) DEFAULT CHARSET=utf8;
@@ -85,8 +86,8 @@ CREATE TABLE IF NOT EXISTS ieas_controller_data (
 
 DROP TABLE IF EXISTS ieas_schedule;
 CREATE TABLE IF NOT EXISTS ieas_schedule (
-	sc_act_date date NOT NULL default '0000-00-00',
-	sc_act_time time NOT NULL default '00:00:00',
+	sc_date date NOT NULL default '0000-00-00',
+	sc_time time NOT NULL default '00:00:00',
 	mb_no int(11) NOT NULL default -1,
 	dv_no int(11) NOT NULL default -1,
 	sc_act tinyint(4) NOT NULL default 0
