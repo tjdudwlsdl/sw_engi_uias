@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS ieas_reservation (
 	rs_act_time time NOT NULL default '00:00:00',
 	mb_id varchar(20) NOT NULL default '',
 	rs_act tinyint(4) NOT NULL default 0,
-	PRIMARY KEY (rs_no)
+	PRIMARY KEY (rs_id)
 ) DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------

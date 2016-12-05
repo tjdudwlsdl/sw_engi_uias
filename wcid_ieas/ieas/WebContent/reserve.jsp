@@ -98,7 +98,15 @@ function WriteYearOptions(YearsAhead)
 <body onLoad="SetToToday('FirstSelect');">
 
 <%! String window_state= "open"; %>
- 
+ <%
+String userID = (String)session.getAttribute("Logon.isDone");
+if(userID==null) {
+	response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
+			request.getScheme(), request.getServerName(), 
+			request.getServerPort(), "/login.jsp"));
+	return;
+}
+%>
  
 <!-- 상단 네비게이션 바 -->
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -261,7 +269,7 @@ function WriteYearOptions(YearsAhead)
         <OPTION>58
         <OPTION>59
 </select>
-<div style="margin-top: 50px;">
+<div style="margin-top: 50px; margin-bottom:200px;">
 <input class="btn btn-lg btn-success" type="submit" value="Reserve">
 </div>
 </FORM>
@@ -277,7 +285,7 @@ function WriteYearOptions(YearsAhead)
  -->
 </body>
 <footer>
-<p style="text-align: right;">user id: AAA</p>
+<!-- <p style="text-align: right;">user id: AAA</p> -->
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px;">Back</button>
 </footer>

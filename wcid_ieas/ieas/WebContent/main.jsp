@@ -14,6 +14,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<%
+String userID = (String)session.getAttribute("Logon.isDone");
+if(userID==null) {
+	response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
+			request.getScheme(), request.getServerName(), 
+			request.getServerPort(), "/login.jsp"));
+	return;
+}
+%>
 <!-- 상단 네비게이션 바 -->
 <div class="navbar navbar-inverse navbar-fixed-top">
           <a class="navbar-brand" href="#">Ajou Univ SWE Project</a>    
@@ -45,6 +54,6 @@
 	</section>
 </body>
 <footer>
-<p style="text-align: left;">user id: AAA</p>
+<!--<p style="text-align: left;">user id: AAA</p>-->
 </footer>
 </html>

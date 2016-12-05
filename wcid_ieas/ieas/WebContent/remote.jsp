@@ -17,7 +17,15 @@
     
 </head>
 <body>
-
+<%
+String userID = (String)session.getAttribute("Logon.isDone");
+if(userID==null) {
+	response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
+			request.getScheme(), request.getServerName(), 
+			request.getServerPort(), "/login.jsp"));
+	return;
+}
+%>
 <%! String window_state= "open"; %>
  
  
@@ -31,18 +39,18 @@
 
 	<div class="page-header"><h4>Window Remote Control</h4></div>
 	<div id="info_table" style=" padding-left:10px; text-align:left;">
-	<p>Current Window State : <%=window_state %>!</p>
+	<h4 style="margin-bottom:50px;">Current Window State : <%=window_state %>!</h4>
 	</div>
 	
-	<form name="remoteForm" method="post" action="/RemoteControlHandler">
-		<input class="btn btn-info btn-lg" type="submit" name="100" value="Open!">
-		<input class="btn btn-warning btn-lg" type="submit" name="0" value="Close!">
+	<form name="remoteForm" method="post" action="/ieas/RemoteControlHandler" style="margin-bottom:220px">
+		<input class="btn btn-info btn-lg" type="submit" name="act" value="Open">
+		<input class="btn btn-warning btn-lg" type="submit" name="act" value="Close">
 	</form>
 
 </section>
 </body>
 <footer>
-<p style="text-align: right;">user id: AAA</p>
+<!-- <p style="text-align: right;">user id: AAA</p> -->
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px;">Back</button>
 </footer>

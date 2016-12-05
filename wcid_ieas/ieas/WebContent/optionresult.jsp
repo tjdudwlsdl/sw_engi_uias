@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.sql.*" %>     <!-- JSP에서 JDBC의 객체를 사용하기 위해 java.sql 패키지를 import 한다 -->
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,38 +14,35 @@
 	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <%
+    String result = (String)request.getAttribute("result"); //on or off
+    
+    %>
 </head>
 <body>
-<%
-String userID = (String)session.getAttribute("Logon.isDone");
-if(userID==null) {
-	response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
-			request.getScheme(), request.getServerName(), 
-			request.getServerPort(), "/login.jsp"));
-	return;
-}
-%>
+ 
 <!-- 상단 네비게이션 바 -->
 <div class="navbar navbar-inverse navbar-fixed-top">
           <a class="navbar-brand" href="#">Ajou Univ SWE Project</a>    
 </div>
 <div class="container">
 </div>
-<section id="buttons" style="margin-top: 70px; text-align: center; margin-bottom:150px">
-	<div class="page-header"><h4>Checking Information</h4></div>
+<section id="buttons" style="margin-top: 70px; text-align: center;">
+
+	<div class="page-header"><h4>Auto Control Option</h4></div>
 	<div id="info_table" style=" padding-left:10px; text-align:left;">
-	<p>Registered location: </p>
-	<p>Weather condition: </p>
-	<p>Temperature: </p>
-	<p>Humidity: </p>
-	<p>CO2 density: </p>
-	<p>Window state: </p>
+	<h4 style="margin-bottom:250px;">You turn <%=result%> automatic maintain system.</h4>
 	</div>
+	
 </section>
 </body>
 <footer>
-<p style="text-align: right;">user id: AAA</p>
+<!-- <p style="text-align: right;">user id: AAA</p> -->
+<section id="buttons" style="text-align: center;">
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
-	style="margin-left:10px;">Back</button>
+	style="margin-left:10px; margin-bottom:10px;">Back to main menu</button>
+<button class="btn btn-primary btn-lg" onclick="location.href='reserve.jsp'" 
+	style="margin-left:10px;">Back to reservation page</button>	
+</section>
 </footer>
 </html>

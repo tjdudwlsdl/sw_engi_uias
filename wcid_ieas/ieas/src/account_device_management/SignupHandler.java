@@ -13,9 +13,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import util_core.LocationUtil;
 import util_core.Meta_DB;
+import util_core.Meta_Page;
 import util_core.SecurityUtil;
 
 /**
@@ -75,21 +77,17 @@ public class SignupHandler extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String userID = request.getParameter("id");		// mb_id
-		String password = request.getParameter("password");
+		HttpSession session = request.getSession(true);
+		String localCode = (String)session.getAttribute("localcode");	// mb_localcode
+		if(localCode == null) {
+			return;
+		}
+		String location = (String)session.getAttribute("location");	// mb_location
+		
+		String userID = (String)session.getAttribute("id");		// mb_id
+		String password = (String)session.getAttribute("password");
 		String salt = SecurityUtil.createSalt(); 	// mb_salt
 		String hashedpswd = SecurityUtil.encryptSHA256(password+salt);	//mb_password
-		
-		String location = request.getParameter("location");	// mb_location
-		String[] locals = location.split(" ");
-		String localCode = LocationUtil.getLocationCode(locals[0], locals[1], locals[2]);	// mb_localcode
 		
 		try {
 			synchronized (lock) {
@@ -105,6 +103,18 @@ public class SignupHandler extends HttpServlet {
 		catch(Exception e) {
 			
 		}
+	
+		session.invalidate();
+		response.sendRedirect(String.format("%s://%s:%d/ieas%s",
+				request.getScheme(), request.getServerName(), request.getServerPort(),
+				Meta_Page.LOGINPAGE));
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
 	}
 
 }

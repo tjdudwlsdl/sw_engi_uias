@@ -27,11 +27,9 @@ public abstract class ProtectedServlet extends HttpServlet {
     private boolean isLogonSession(HttpServletRequest request, HttpServletResponse response)
     		throws ServletException, IOException {
     	HttpSession session = request.getSession(true);
-    	
-    	Object done = session.getAttribute("Logon.isDone");
-    	if(done==null) {
-    		session.setAttribute("login.target", request.getRequestURL().toString());
-    		response.sendRedirect(String.format("%s://%s:%d%s", 
+    	String userID = (String)session.getAttribute("Logon.isDone");
+    	if(userID==null) {
+    		response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
     				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
     		return false;
     	}

@@ -112,7 +112,7 @@ public class RemoteControlHandler extends HttpServlet {
 		HttpSession session = request.getSession(true);
     	String userID = (String)session.getAttribute("Logon.isDone");
     	if(userID==null) {
-    		response.sendRedirect(String.format("%s://%s:%d%s", 
+    		response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
     				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
     		return;
     	}

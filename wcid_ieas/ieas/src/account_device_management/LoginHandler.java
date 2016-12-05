@@ -54,8 +54,8 @@ public class LoginHandler extends HttpServlet {
     		conn = DriverManager.getConnection(
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		check_signed_pstmt = conn.prepareStatement(String.format(
-    				"SELECT %s FROM %s WHERE %s=?",
-    				Meta_DB.col_mbKey, Meta_DB.tb_member, Meta_DB.col_mbID));
+    				"SELECT * FROM %s WHERE %s=?",
+    				Meta_DB.tb_member, Meta_DB.col_mbID));
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -102,16 +102,7 @@ public class LoginHandler extends HttpServlet {
 			HttpSession session = request.getSession(true);
 			session.setAttribute("logon.done", userID);
 			
-			// 접근하려 했던 페이지가 있다면 경로 재설정
-			try {
-				String target = (String)session.getAttribute("login.target");
-				if(target != null)
-					response.sendRedirect(target);
-				return;
-			}
-			catch(Exception ignored) {}
-			
-			// 없다면 메인 페이지로 이동.
+			// 메인 페이지로 이동.
 			response.sendRedirect(String.format("%s://%s:%d/ieas%s",
 					request.getScheme(), request.getServerName(), request.getServerPort(),
 					Meta_Page.MAINPAGE));
