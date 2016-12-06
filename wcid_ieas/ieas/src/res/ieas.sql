@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS ieas_device;
 CREATE TABLE IF NOT EXISTS ieas_device (
 	dv_no int(11) NOT NULL auto_increment,
 	dv_id varchar(255) NOT NULL default '',
-	mb_no int(11) NOT NULL,
+	mb_id varchar(20) NOT NULL,
 	dv_type varchar(20) NOT NULL default '',
 	PRIMARY KEY (dv_no),
 	UNIQUE KEY dv_id (dv_id)

@@ -120,7 +120,7 @@ public class RemoteControlHandler extends HttpServlet {
     	// 입력된 명령을 가져와 schedule 테이블에 저장
 		try {
 			int act;
-			if(request.getParameter("act").equals("open"))
+			if(request.getParameter("act").equals("Open"))
 				act = 100;
 			else
 				act = 0;

@@ -1,13 +1,11 @@
-package auto_control_management;
+package environment_data_collector;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
@@ -20,22 +18,24 @@ import util_core.Meta_DB;
 import util_core.Meta_Page;
 
 /**
- * Servlet implementation class AutoControlManager
- * Auto Control 사용 여부를 제어합니다.
+ * Servlet implementation class EnvDataGetter
+ * 유저의 환경 데이터 정보를 가져옵니다.
  */
-@WebServlet("/AutoControlManager")
-public class AutoControlManager extends HttpServlet {
+@WebServlet("/EnvDataGetter")
+public class EnvDataGetter extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Object lock = new Object();
 	
 	private Connection conn;
-	private PreparedStatement get_pstmt;
-	private PreparedStatement update_pstmt;
+	private PreparedStatement we_pstmt;
+	private PreparedStatement se_pstmt;
+	private PreparedStatement co_pstmt;
+	private PreparedStatement dv_pstmt;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AutoControlManager() {
+    public EnvDataGetter() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -47,13 +47,20 @@ public class AutoControlManager extends HttpServlet {
     		Class.forName(Meta_DB.driver);
     		conn = DriverManager.getConnection(
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
-    		get_pstmt = conn.prepareStatement(String.format(
-    				"SELECT %s FROM %s WHERE %s=?", 
-    				Meta_DB.col_mbAuto, Meta_DB.tb_member, Meta_DB.col_mbID));
-    		update_pstmt = conn.prepareStatement(String.format(
-    				"UPDATE %s SET %s=? WHERE %s=?",
-    				Meta_DB.tb_member, Meta_DB.col_mbAuto, Meta_DB.col_mbID));
-    		
+    		dv_pstmt = conn.prepareStatement(String.format(
+    				"SELECT (%s,%s) FROM %s WHERE %s=?",
+    				Meta_DB.col_dvID, Meta_DB.col_dvType,
+    				Meta_DB.tb_device, Meta_DB.col_mbID));
+    		we_pstmt = conn.prepareStatement(String.format(
+    				"SELECT * FROM %s w INNER %s m ON w.%s=m.%s WHERE %s=?",
+    				Meta_DB.tb_weather, Meta_DB.tb_member,
+    				Meta_DB.col_weLocalcode, Meta_DB.col_mbLocalcode, Meta_DB.col_mbID));
+    		se_pstmt = conn.prepareStatement(String.format(
+    				"SELECT * FROM %s WHERE %s=?",
+    				Meta_DB.tb_SensorData, Meta_DB.col_dvID));
+    		co_pstmt = conn.prepareStatement(String.format(
+    				"SELECT * FROM %s WHERE %s=?",
+    				Meta_DB.tb_ControllerData, Meta_DB.col_dvID));				
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -85,42 +92,14 @@ public class AutoControlManager extends HttpServlet {
     		return;
     	}
 		
-		String auto = request.getParameter("auto");
-		int mb_auto = -1;
-		try {
-			switch(auto) {
-			case "On":
-				mb_auto = 1;
-				break;
-				
-			case "Off":
-				mb_auto = 0;
-				break;
-				
-			default:
-				throw new Exception();
-			}
-			
-			synchronized (lock) {
-				update_pstmt.clearParameters();
-				update_pstmt.setInt(1, mb_auto);
-				update_pstmt.setString(2, userID);
-				update_pstmt.executeUpdate();
-			}
-		}
-		catch (Exception e) {
-			auto = "Off";
-		}
-		
-		RequestDispatcher rd = request.getRequestDispatcher(Meta_Page.AUTORESPAGE);
-		request.setAttribute("result", auto);
-		rd.forward(request, response);
+    	
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

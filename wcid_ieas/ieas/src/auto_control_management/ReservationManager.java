@@ -32,8 +32,6 @@ public class ReservationManager extends HttpServlet {
 	
 	private Connection conn;
 	private PreparedStatement get_pstmt;
-	private PreparedStatement add_pstmt;
-	private PreparedStatement remove_pstmt;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -52,12 +50,6 @@ public class ReservationManager extends HttpServlet {
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		get_pstmt = conn.prepareStatement(String.format(
     				"SELECT * FROM %s WHERE %s=?", Meta_DB.tb_reservation, Meta_DB.col_mbID));
-    		add_pstmt = conn.prepareStatement(String.format(
-    				"INSERT INTO %s (%s,%s,%s,%s) VALUES (?,?,?,?)",
-    				Meta_DB.tb_reservation, Meta_DB.col_rsActDate, Meta_DB.col_rsActTime,
-    				Meta_DB.col_mbID, Meta_DB.col_rsAct));
-    		remove_pstmt = conn.prepareStatement(String.format(
-    				"DELETE FROM %s WHERE %s=?", Meta_DB.tb_reservation, Meta_DB.col_rsID));
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -87,7 +79,6 @@ public class ReservationManager extends HttpServlet {
     				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
     		return;
     	}
-    	
     	// 해당 사용자의 예약 리스트를 가져옴
     	ArrayList<Reservation> list = new ArrayList<Reservation>();
     	try {
@@ -97,7 +88,6 @@ public class ReservationManager extends HttpServlet {
     			get_pstmt.setString(1, userID);
     			rs = get_pstmt.executeQuery();
     		}
-    			
     		while(rs.next()) {
     			list.add(new Reservation(
     			rs.getInt(Meta_DB.col_rsID),
@@ -115,16 +105,7 @@ public class ReservationManager extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(true);
-    	String userID = (String)session.getAttribute("Logon.isDone");
-    	if(userID==null) {
-    		response.sendRedirect(String.format("%s://%s:%d/ieas%s", 
-    				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
-    		return;
-    	}
-		
-		String rs_id = request.getParameter("id");
-		
+		doGet(request, response);
 	}
 
 }

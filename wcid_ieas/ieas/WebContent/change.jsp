@@ -32,7 +32,7 @@
 	<h4>Your account will be logged out.</h4>
 	<h4 style="margin-bottom:50px;">Do you want to continue?</h4>
 	</div>
-	<form method="post" action="/ieas/LoginHandler" style="margin-bottom:200px">
+	<form method="post" action="/ieas/LogoutHandler" style="margin-bottom:200px">
 	<input class="btn btn-default btn-lg" type="submit" name="logout" value="Logout">
 	</form>
 	

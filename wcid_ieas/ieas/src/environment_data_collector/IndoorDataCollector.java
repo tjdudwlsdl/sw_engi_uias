@@ -48,6 +48,8 @@ public class IndoorDataCollector extends HttpServlet {
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		sensor_pstmt = conn.prepareStatement(String.format(
     				"INSERT INTO %s VALUES (?,?,?,?,?,?)", Meta_DB.tb_SensorData));
+    		controller_pstmt = conn.prepareStatement(String.format(
+    				"INSERT INTO %s VALUES (?,?,?,?)", Meta_DB.tb_ControllerData));
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -74,7 +76,7 @@ public class IndoorDataCollector extends HttpServlet {
 		
 		String dv_id = request.getParameter("id");
 		String type = request.getParameter("type");
-		DateTime dateTime = new DateTime("Asia/seoul");
+		DateTime dateTime = new DateTime("Asia/Seoul");
 		
 		switch(type) {
 		

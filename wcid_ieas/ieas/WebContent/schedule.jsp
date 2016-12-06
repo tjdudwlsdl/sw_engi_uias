@@ -8,7 +8,7 @@
 <%@ page import = "org.json.simple.JSONValue" %>
 
 <%@ page import = "auto_control_management.Reservation" %>
-<!-- WEB-INF/classes/auto_control_management 폴더에 *.class 파일 이동(없으면 해당 경로대로 만들것) -->
+
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  <!-- jstl 사용 -->
 
@@ -38,6 +38,10 @@ if(userID==null) {
 			request.getServerPort(), "/login.jsp"));
 	return;
 }
+
+request.getRequestDispatcher("/ReservationManager").include(request, response);
+Reservation[] list = (Reservation[])request.getAttribute("list");
+
 %>
 <!-- 상단 네비게이션 바 -->
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -49,51 +53,44 @@ if(userID==null) {
 <section id="buttons" style="margin-top: 70px; text-align: center;">
 	<div class="page-header"><h4>Check Schedule</h4></div>	
 </section>
-<div>
-<table class="table table-bodered table-hover">
-	<thead>
-	<tr>
-	<th>Year</th>
-	<th>Month</th>
-	<th>Day</th>
-	<th>Hour</th>
-	<th>Minute</th>
-	<th>Operation</th>
-	</tr>
-	</thead>
-	
-	<c:if test="${list.size()}==0">
-	<tfoot>
-	<tr>
-	<td colspan="6"> no data </td>
-	</tr>
-	</tfoot>
-	</c:if>
-	<tbody>
-	
+
+<table class="table table-bodered table-hover" style="width:100%; overflow:auto;">
+
+<% 
+if (list==null || list.length == 0) {
+%> <tr><td>
+	<h4>no data</h4></td></tr>
 <%
-	request.getRequestDispatcher("/ReservationManager").include(request, response);
-    Reservation[] list = (Reservation[])request.getAttribute("list");
-	int size = list.length;
+} 
 	String oper = null;
-	for(int i=0;i<size;i++){
-		%><tr><td colspan="6" style="text-align:left; margin-left:5px;"><%=list[i].getDate().toString()%> 
-		 <%=list[i].getTime().toString()%> 
-		<% if(list[i].getAct()==0){
+	for(int i=0;i<list.length;i++) { 
+		if(list[i].getAct()==0)
 			oper = "Close";
-		}
-		else
-			oper = "Open";%>
-		 <%=oper%>
-		 <form method="post" action="/ieas/ReservationHandeler">
-		 	<input type="hidden" name="id" value="<%=list[i].getID()%>">
-		 	<input type="submit" class="btn btn-primary" value="Cancel">
+		else 
+			oper = "Open";
+			%>
+		<tr style="vertical-align:middle;">
+		<td><h4>
+		<%=list[i].getDate().toString() %>
+		</h4></td>
+		<td><h4>
+		<%=list[i].getTime().toString() %>
+		</h4></td>
+		<td><h4>
+		<%=oper %>
+		</h4></td>
+			<td>
+		 <form method="post" action="/ieas/Reserve" style="vertical-align:middle; text-align:right; margin-right:10px;">
+		 	<input type="hidden" name="command" value="cancel">
+		 	<input type="hidden" name="id" value="<%=String.valueOf(list[i].getID())%>">
+		 	<input type="submit" class="btn btn-danger btn-sm" value="Cancel" style="float:right; margin-right:10px; vertical-align:0px;">
 		 </form>
-		 </td></tr>
-		<%}%>
-	</tbody>		
+		 </td>
+		 </tr>
+	<%}%>
 </table>
-</div>
+
+
 
 </body>
 <footer>

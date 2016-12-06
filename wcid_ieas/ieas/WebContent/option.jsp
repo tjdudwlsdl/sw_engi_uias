@@ -41,8 +41,8 @@ if(userID==null) {
 	</div>
 	
 	<form name="optionChange" method="post" action="/ieas/AutoControlManager" style="margin-bottom:220px">
-		<input class="btn btn-info btn-lg" type="submit" name="act" value="On"style="margin-right:50px; width:100px">
-		<input class="btn btn-warning btn-lg" type="submit" name="act" value="Off" style="width:100px">
+		<input class="btn btn-info btn-lg" type="submit" name="auto" value="On"style="margin-right:50px; width:100px">
+		<input class="btn btn-warning btn-lg" type="submit" name="auto" value="Off" style="width:100px">
 	</form>
 
 </section>

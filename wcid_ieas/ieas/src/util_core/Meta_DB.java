@@ -19,12 +19,18 @@ public class Meta_DB {
 	public static final String tb_device = "ieas_device";
 	public static final String col_dvKey = "dv_no";
 	public static final String col_dvID = "dv_id";
+	public static final String col_dvType = "dv_type";
 	
 	public static final String tb_login = "ieas_login";
 	
 	public static final String tb_SensorData = "ieas_sensor_data";
 	
+	public static final String tb_ControllerData = "ieas_controller_data";
+	
 	public static final String tb_weather = "ieas_weather";
+	public static final String col_wePty = "we_pty";
+	public static final String col_weSky = "we_sky";
+	public static final String col_weLocalcode = "we_localcode";
 	
 	public static final String tb_schedule = "ieas_schedule";
 	public static final String col_scAct = "sc_act";

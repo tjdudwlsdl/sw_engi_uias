@@ -124,8 +124,8 @@ if(userID==null) {
 </div>
 
 	
-	<FORM name="Form1" method="post" action="/ieas/ReservationManager">
-
+	<FORM name="Form1" method="post" action="/ieas/Reserve">
+		<input type="hidden" name="command" value="reserve">
 	
 <SELECT name="FirstSelectYear" onchange="ChangeOptionDays('FirstSelect')">
         <SCRIPT language="JavaScript">
@@ -269,9 +269,25 @@ if(userID==null) {
         <OPTION>58
         <OPTION>59
 </select>
+
+<div class="radio">
+  <label>
+    <input type="radio" name="act" value="100">Open
+  </label>
+</div>
+<div class="radio">
+  <label>
+    <input type="radio" name="act" value="0">Close
+  </label>
+</div>	
+
+
 <div style="margin-top: 50px; margin-bottom:200px;">
 <input class="btn btn-lg btn-success" type="submit" value="Reserve">
 </div>
+
+
+
 </FORM>
 	
 </section>

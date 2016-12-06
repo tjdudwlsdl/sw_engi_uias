@@ -100,7 +100,7 @@ public class LoginHandler extends HttpServlet {
 		else {
 			// 유효한 로그인. 세션 생성
 			HttpSession session = request.getSession(true);
-			session.setAttribute("logon.done", userID);
+			session.setAttribute("Logon.isDone", userID);
 			
 			// 메인 페이지로 이동.
 			response.sendRedirect(String.format("%s://%s:%d/ieas%s",
