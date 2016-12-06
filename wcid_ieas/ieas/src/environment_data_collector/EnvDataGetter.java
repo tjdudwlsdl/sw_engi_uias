@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.locks.Condition;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -92,7 +94,77 @@ public class EnvDataGetter extends HttpServlet {
     		return;
     	}
 		
+    	String location = "";
+    	String condition = "";
+    	String tmp = "";
+    	String reh = "";
+    	String co2 = "";
+    	String state = "";
+    	ResultSet rs;
+    	// 유저가 등록된 위치의 기상 정보를 가져옴
+    	try {
+    		synchronized (lock) {
+				we_pstmt.clearParameters();
+				we_pstmt.setString(1, userID);
+				rs = we_pstmt.executeQuery();
+			}
+    		if (rs.next()) {
+    			location = rs.getString(Meta_DB.col_mbLocation);
+    			int sky = rs.getInt(Meta_DB.col_weSky);
+    			int pty = rs.getInt(Meta_DB.col_wePty);
+    			if(pty==0) {
+    				
+    			}
+    		}
+    	}
+    	catch(Exception ignored) { }
     	
+    	// 각 디바이스에서 수집된 정보를 가져옴
+    	try {
+    		synchronized (lock) {
+				dv_pstmt.clearParameters();
+				dv_pstmt.setString(1, userID);
+				rs = dv_pstmt.executeQuery();
+			}
+    		while (rs.next()) {
+    			String dv_id = rs.getString(Meta_DB.col_dvID);
+    			String dv_type = rs.getString(Meta_DB.col_dvType);
+    			ResultSet envRs;
+    			switch(dv_type) {
+    			case "sensor":
+    				synchronized (lock) {
+        				se_pstmt.clearParameters();
+        				se_pstmt.setString(1, dv_id);
+        				envRs = se_pstmt.executeQuery();
+    				}
+    				if(envRs.next()) {
+    					
+    				}
+    				break;
+    				
+    			case "controller":
+    				synchronized (lock) {
+        				co_pstmt.clearParameters();
+        				co_pstmt.setString(1, dv_id);
+        				envRs = co_pstmt.executeQuery();
+    				}
+    				if(envRs.next()) {
+    					
+    				}
+    				
+    				break;
+    			}
+    			
+    		}
+    	}
+    	catch(Exception ignored) { }
+    	
+    	request.setAttribute("location", location);
+    	request.setAttribute("condition", condition);
+    	request.setAttribute("temperature", tmp);
+    	request.setAttribute("humidity", reh);
+    	request.setAttribute("co2", co2);
+    	request.setAttribute("state", state);
 	}
 
 	/**

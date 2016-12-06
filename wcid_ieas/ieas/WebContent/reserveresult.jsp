@@ -31,7 +31,6 @@
 </section>
 </body>
 <footer>
-<!-- <p style="text-align: right;">user id: AAA</p> -->
 <section id="buttons" style="text-align: center;">
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px; margin-bottom:10px;">Back to main menu</button>

@@ -301,7 +301,6 @@ if(userID==null) {
  -->
 </body>
 <footer>
-<!-- <p style="text-align: right;">user id: AAA</p> -->
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px;">Back</button>
 </footer>

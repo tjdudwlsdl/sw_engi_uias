@@ -54,6 +54,5 @@ if(userID==null) {
 	</section>
 </body>
 <footer>
-<!--<p style="text-align: left;">user id: AAA</p>-->
 </footer>
 </html>

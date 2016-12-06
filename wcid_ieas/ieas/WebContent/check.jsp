@@ -35,17 +35,16 @@ if(userID==null) {
 <section id="buttons" style="margin-top: 70px; text-align: center; margin-bottom:150px">
 	<div class="page-header"><h4>Checking Information</h4></div>
 	<div id="info_table" style=" padding-left:10px; text-align:left;">
-	<p>Registered location: </p>
-	<p>Weather condition: </p>
-	<p>Temperature: </p>
-	<p>Humidity: </p>
-	<p>CO2 density: </p>
-	<p>Window state: </p>
+	<p>Registered location: 경기도 수원시영통구 원천동</p>
+	<p>Weather condition: Sunny</p>
+	<p>Temperature: 12</p>
+	<p>Humidity: 35 %</p>
+	<p>CO2 density: 0.04 %</p>
+	<p>Window state: Open</p>
 	</div>
 </section>
 </body>
 <footer>
-<p style="text-align: right;">user id: AAA</p>
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px;">Back</button>
 </footer>
