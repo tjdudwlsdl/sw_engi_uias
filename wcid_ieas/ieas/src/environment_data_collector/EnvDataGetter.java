@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import environment_data_analyzer.EnvironmentAnalyzer;
 import util_core.Meta_DB;
 import util_core.Meta_Page;
 
@@ -50,19 +51,22 @@ public class EnvDataGetter extends HttpServlet {
     		conn = DriverManager.getConnection(
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		dv_pstmt = conn.prepareStatement(String.format(
-    				"SELECT (%s,%s) FROM %s WHERE %s=?",
+    				"SELECT %s,%s FROM %s WHERE %s=?",
     				Meta_DB.col_dvID, Meta_DB.col_dvType,
     				Meta_DB.tb_device, Meta_DB.col_mbID));
     		we_pstmt = conn.prepareStatement(String.format(
-    				"SELECT * FROM %s w INNER %s m ON w.%s=m.%s WHERE %s=?",
-    				Meta_DB.tb_weather, Meta_DB.tb_member,
-    				Meta_DB.col_weLocalcode, Meta_DB.col_mbLocalcode, Meta_DB.col_mbID));
+    				"SELECT * FROM %s w JOIN %s m ON w.%s=m.%s WHERE %s=? ORDER BY w.%s desc, w.%s desc limit 1",
+    				Meta_DB.tb_weather, Meta_DB.tb_member, Meta_DB.col_weLocalcode, 
+    				Meta_DB.col_mbLocalcode, Meta_DB.col_mbID, 
+    				Meta_DB.col_weDate, Meta_DB.col_weTime));
     		se_pstmt = conn.prepareStatement(String.format(
-    				"SELECT * FROM %s WHERE %s=?",
-    				Meta_DB.tb_SensorData, Meta_DB.col_dvID));
+    				"SELECT * FROM %s WHERE %s=? ORDER BY %s desc, %s desc limit 1",
+    				Meta_DB.tb_SensorData, Meta_DB.col_dvID, 
+    				Meta_DB.col_seDate, Meta_DB.col_seTime));
     		co_pstmt = conn.prepareStatement(String.format(
-    				"SELECT * FROM %s WHERE %s=?",
-    				Meta_DB.tb_ControllerData, Meta_DB.col_dvID));				
+    				"SELECT * FROM %s WHERE %s=? ORDER BY %s desc, %s desc limit 1",
+    				Meta_DB.tb_ControllerData, Meta_DB.col_dvID,
+    				Meta_DB.col_coDate, Meta_DB.col_coTime));				
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -96,8 +100,8 @@ public class EnvDataGetter extends HttpServlet {
 		
     	String location = "";
     	String condition = "";
-    	String tmp = "";
-    	String reh = "";
+    	String temperature = "";
+    	String humidity = "";
     	String co2 = "";
     	String state = "";
     	ResultSet rs;
@@ -112,9 +116,7 @@ public class EnvDataGetter extends HttpServlet {
     			location = rs.getString(Meta_DB.col_mbLocation);
     			int sky = rs.getInt(Meta_DB.col_weSky);
     			int pty = rs.getInt(Meta_DB.col_wePty);
-    			if(pty==0) {
-    				
-    			}
+    			condition = EnvironmentAnalyzer.getWeatherString(sky, pty);
     		}
     	}
     	catch(Exception ignored) { }
@@ -138,7 +140,12 @@ public class EnvDataGetter extends HttpServlet {
         				envRs = se_pstmt.executeQuery();
     				}
     				if(envRs.next()) {
-    					
+    					double se_tmp = envRs.getDouble(Meta_DB.col_seTmp);
+    					double se_reh = envRs.getDouble(Meta_DB.col_seReh);
+    					double se_co2 = envRs.getDouble(Meta_DB.col_seCo2);
+    					temperature = String.valueOf(se_tmp);
+    					humidity = String.valueOf(se_reh);
+    					co2 = String.valueOf(se_co2);
     				}
     				break;
     				
@@ -149,7 +156,17 @@ public class EnvDataGetter extends HttpServlet {
         				envRs = co_pstmt.executeQuery();
     				}
     				if(envRs.next()) {
-    					
+    					int co_state = envRs.getInt(Meta_DB.col_coState);
+    					switch(co_state) {
+    					case 0:
+    						state = "Close";
+    						break;
+    					case 1:
+    						state = "Open";
+    						break;
+    					default:
+    						state = String.format("%d%% Open", co_state);
+    					}
     				}
     				
     				break;
@@ -161,8 +178,8 @@ public class EnvDataGetter extends HttpServlet {
     	
     	request.setAttribute("location", location);
     	request.setAttribute("condition", condition);
-    	request.setAttribute("temperature", tmp);
-    	request.setAttribute("humidity", reh);
+    	request.setAttribute("temperature", temperature);
+    	request.setAttribute("humidity", humidity);
     	request.setAttribute("co2", co2);
     	request.setAttribute("state", state);
 	}

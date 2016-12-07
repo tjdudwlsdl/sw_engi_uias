@@ -29,7 +29,6 @@ public class IndoorDataCollector extends HttpServlet {
 
 	private Connection conn;
 	private PreparedStatement sensor_pstmt;
-	private PreparedStatement controller_pstmt;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -48,8 +47,6 @@ public class IndoorDataCollector extends HttpServlet {
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		sensor_pstmt = conn.prepareStatement(String.format(
     				"INSERT INTO %s VALUES (?,?,?,?,?,?)", Meta_DB.tb_SensorData));
-    		controller_pstmt = conn.prepareStatement(String.format(
-    				"INSERT INTO %s VALUES (?,?,?,?)", Meta_DB.tb_ControllerData));
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -102,25 +99,6 @@ public class IndoorDataCollector extends HttpServlet {
 				
 			}
 			
-			break;
-			
-		// 컨트롤러 데이터
-		case "controller":
-			try {
-				int state = Integer.parseInt(request.getParameter("state"));
-				
-				synchronized (lock) {
-					controller_pstmt.clearParameters();
-					controller_pstmt.setDate(1, dateTime.getDate());
-					controller_pstmt.setTime(2, dateTime.getTime());
-					controller_pstmt.setString(3, dv_id);
-					controller_pstmt.setInt(4, state);
-					controller_pstmt.executeUpdate();
-				}
-			}
-			catch(Exception e) {
-				
-			}
 			break;
 			
 		default:

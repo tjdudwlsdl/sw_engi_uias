@@ -76,7 +76,8 @@ CREATE TABLE IF NOT EXISTS ieas_controller_data (
 	co_date date NOT NULL default '0000-00-00',
 	co_time time NOT NULL default '00:00:00',
 	dv_id varchar(255) NOT NULL default '',
-	co_state tinyint(4) NOT NULL default 0
+	co_state tinyint(4) NOT NULL default 0,
+	co_priority tinyint(4) NOT NULL default 0
 ) DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------
@@ -88,9 +89,10 @@ DROP TABLE IF EXISTS ieas_schedule;
 CREATE TABLE IF NOT EXISTS ieas_schedule (
 	sc_date date NOT NULL default '0000-00-00',
 	sc_time time NOT NULL default '00:00:00',
-	mb_no int(11) NOT NULL default -1,
-	dv_no int(11) NOT NULL default -1,
-	sc_act tinyint(4) NOT NULL default 0
+	mb_id varchar(20) NOT NULL default "",
+	dv_id varchar(255) NOT NULL default "",
+	sc_act tinyint(4) NOT NULL default 0,
+	sc_priority tinyint(4) NOT NULL default 0
 ) DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------

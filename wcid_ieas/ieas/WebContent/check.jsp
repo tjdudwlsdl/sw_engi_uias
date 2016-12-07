@@ -25,6 +25,14 @@ if(userID==null) {
 			request.getServerPort(), "/login.jsp"));
 	return;
 }
+
+request.getRequestDispatcher("/EnvDataGetter").include(request, response);
+String location = (String)request.getAttribute("location");
+String condition = (String)request.getAttribute("condition");
+String temperature = (String)request.getAttribute("temperature");
+String humidity = (String)request.getAttribute("humidity");
+String co2 = (String)request.getAttribute("co2");
+String state = (String)request.getAttribute("state");
 %>
 <!-- 상단 네비게이션 바 -->
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -35,12 +43,12 @@ if(userID==null) {
 <section id="buttons" style="margin-top: 70px; text-align: center; margin-bottom:150px">
 	<div class="page-header"><h4>Checking Information</h4></div>
 	<div id="info_table" style=" padding-left:10px; text-align:left;">
-	<p>Registered location: 경기도 수원시영통구 원천동</p>
-	<p>Weather condition: Sunny</p>
-	<p>Temperature: 12</p>
-	<p>Humidity: 35 %</p>
-	<p>CO2 density: 0.04 %</p>
-	<p>Window state: Open</p>
+	<p>Registered location: <%=location%></p>
+	<p>Weather condition: <%=condition%></p>
+	<p>Temperature: <%=temperature%> ℃</p>
+	<p>Humidity: <%=humidity%> %</p>
+	<p>CO2 density: <%=co2%> ppm</p>
+	<p>Window state: <%=state%></p>
 	</div>
 </section>
 </body>

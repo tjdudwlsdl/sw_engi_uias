@@ -41,8 +41,8 @@
 <section id="buttons" style="text-align: center;">
 <button class="btn btn-primary btn-lg" onclick="location.href='main.jsp'" 
 	style="margin-left:10px; margin-bottom:10px;">Back to main menu</button>
-<button class="btn btn-primary btn-lg" onclick="location.href='reserve.jsp'" 
-	style="margin-left:10px;">Back to reservation page</button>	
+<button class="btn btn-primary btn-lg" onclick="location.href='option.jsp'" 
+	style="margin-left:10px;">Back to auto control option page</button>	
 </section>
 </footer>
 </html>

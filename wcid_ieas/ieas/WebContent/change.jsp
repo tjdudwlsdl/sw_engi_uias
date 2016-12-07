@@ -43,12 +43,12 @@
    <input type="text" name="id" placeholder="Enter device id here">
    <div class="radio">
    <label>
-       <input type="radio" name="deviceType" value="sensor">Sensor
+       <input type="radio" name="type" value="sensor">Sensor
      </label>
    </div>
    <div class="radio">
      <label>
-    <input type="radio" name="act" value="controller">Controller
+    <input type="radio" name="type" value="controller">Controller
      </label>
    </div>
    <input class="btn btn-default" type="submit" name="deviceRegister" value="Register">   

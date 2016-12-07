@@ -1,12 +1,10 @@
-package auto_control_management;
+package account_device_management;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,21 +19,20 @@ import util_core.Meta_DB;
 import util_core.Meta_Page;
 
 /**
- * Servlet implementation class ReservationManager
- * 사용자에 의한 예약 정보를 가져옵니다.
+ * Servlet implementation class DeviceHandler
  */
-@WebServlet("/ReservationManager")
-public class ReservationManager extends HttpServlet {
+@WebServlet("/DeviceHandler")
+public class DeviceHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Object lock = new Object();
 	
-	private Connection conn;
-	private PreparedStatement get_pstmt;
+	private static Connection conn;
+	PreparedStatement regdev_pstmt;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ReservationManager() {
+    public DeviceHandler() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -47,8 +44,10 @@ public class ReservationManager extends HttpServlet {
     		Class.forName(Meta_DB.driver);
     		conn = DriverManager.getConnection(
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
-    		get_pstmt = conn.prepareStatement(String.format(
-    				"SELECT * FROM %s WHERE %s=?", Meta_DB.tb_reservation, Meta_DB.col_mbID));
+    		regdev_pstmt = conn.prepareStatement(String.format(
+    				"INSERT INTO %s (%s, %s, %s) VALUES (?,?,?)",
+    				Meta_DB.tb_device, Meta_DB.col_dvID, Meta_DB.col_mbID, Meta_DB.col_dvType));
+    		
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -68,8 +67,9 @@ public class ReservationManager extends HttpServlet {
     	catch (SQLException ignore) { }
     }
 
-
-    // 유저의 Reservation 리스트를 request로 반환합니다.
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(true);
     	String userID = (String)session.getAttribute("Logon.isDone");
@@ -78,32 +78,29 @@ public class ReservationManager extends HttpServlet {
     				request.getScheme(), request.getServerName(), request.getServerPort(), Meta_Page.LOGINPAGE));
     		return;
     	}
-    	// 해당 사용자의 예약 리스트를 가져옴
-    	ArrayList<Reservation> list = new ArrayList<Reservation>();
-    	try {
-    		ResultSet rs;
-    		synchronized (lock) {
-    			get_pstmt.clearParameters();
-    			get_pstmt.setString(1, userID);
-    			rs = get_pstmt.executeQuery();
-    		}
-    		while(rs.next()) {
-    			list.add(new Reservation(
-    			rs.getInt(Meta_DB.col_rsID),
-    			rs.getDate(Meta_DB.col_rsActDate),
-   				rs.getTime(Meta_DB.col_rsActTime),
-    			rs.getString(Meta_DB.col_mbID),
-    			rs.getInt(Meta_DB.col_rsAct)));
-    		}
-    	} catch(Exception ignored) { }
     	
-    	request.setAttribute("list", list.toArray(new Reservation[0]));
+    	String id = request.getParameter("id");
+    	String type = request.getParameter("type");
+    	try {
+    		synchronized (lock) {
+				regdev_pstmt.clearParameters();
+				regdev_pstmt.setString(1, id);
+				regdev_pstmt.setString(2, userID);
+				regdev_pstmt.setString(3, type);
+				regdev_pstmt.executeUpdate();
+			}
+    	}
+    	catch(Exception ignored) { }
+    	
+    	RequestDispatcher rd = request.getRequestDispatcher("/main.jsp");
+    	rd.forward(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

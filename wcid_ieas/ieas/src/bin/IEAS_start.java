@@ -2,8 +2,13 @@ package bin;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.SocketException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.management.monitor.MonitorSettingException;
 
@@ -40,11 +45,34 @@ public class IEAS_start {
 			System.exit(0);
 		}
 		
-		Timer weatherCollect = new Timer();
-		Timer analyzer = new Timer();
+		Timer weatherCollect = new Timer(true);
+		Timer analyzer = new Timer(true);
 		
-		weatherCollect.schedule(new WeatherCollectionTask(), 0, WeatherCollectionTask.INTERVAL);
-		analyzer.schedule(new AnalysisTask(), AnalysisTask.INTERVAL);
+		weatherCollect.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					URL url = new URL("http://localhost/ieas/WeatherCollectionTask");
+					URLConnection conn = url.openConnection();
+					Scanner scan = new Scanner(conn.getInputStream());
+					while(scan.hasNext()) { }
+					scan.close();
+				} catch(Exception e) { }
+			}
+		}, 0, 3600000);
+		analyzer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					URL url = new URL("http://localhost/ieas/AnalysisTask");
+					URLConnection conn = url.openConnection();
+					Scanner scan = new Scanner(conn.getInputStream());
+					while(scan.hasNext()) { }
+					scan.close();
+				} catch(Exception e) { }
+				
+			}
+		}, 0, 60000);
 		
 		System.out.println("ieas start.");
 		// 종료 명령 대기

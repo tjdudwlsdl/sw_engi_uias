@@ -8,17 +8,16 @@ import java.util.TimeZone;
 public class DateTime {
 	private Date date;
 	private Time time;
-	private long datetime;
 	
-	public static long getLocalDateTime(String timeZoneID) {
+	private static long getLocalDateTime(String timeZoneID) {
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(timeZoneID));
 		return calendar.getTimeInMillis();
 	}
 	
 	public DateTime(String timeZoneID) {
-		this.datetime = getLocalDateTime(timeZoneID);
-		this.date = new Date(datetime);
-		this.time = new Time(datetime);
+		long datetime = getLocalDateTime(timeZoneID);
+		this.date = Date.valueOf(new Date(datetime).toString());
+		this.time = Time.valueOf(new Time(datetime).toString());
 	}
 	
 	public DateTime(String year, String month, String day, String hour, String minute)
@@ -72,5 +71,13 @@ public class DateTime {
 	
 	public Time getTime() {
 		return time;
+	}
+	
+	public long getDateTime() {
+		return date.getTime()+time.getTime();
+	}
+	
+	public long getDateTimeDiff(Date date, Time time) {
+		return getDateTime() - (date.getTime()+time.getTime());
 	}
 }

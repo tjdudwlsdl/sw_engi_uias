@@ -26,7 +26,7 @@ if(userID==null) {
 	return;
 }
 %>
-<%! String window_state= "open"; %>
+<%! String window_state; %>
  
  
 <!-- 상단 네비게이션 바 -->

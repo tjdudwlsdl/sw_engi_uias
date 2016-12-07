@@ -24,16 +24,32 @@ public class Meta_DB {
 	public static final String tb_login = "ieas_login";
 	
 	public static final String tb_SensorData = "ieas_sensor_data";
+	public static final String col_seDate = "se_date";
+	public static final String col_seTime = "se_time";
+	public static final String col_seTmp = "se_temperature";
+	public static final String col_seReh = "se_humidity";
+	public static final String col_seCo2 = "se_co2";
 	
 	public static final String tb_ControllerData = "ieas_controller_data";
+	public static final String col_coDate = "co_date";
+	public static final String col_coTime = "co_time";
+	public static final String col_coState = "co_state";
 	
 	public static final String tb_weather = "ieas_weather";
+	public static final String col_weDate = "we_date";
+	public static final String col_weTime = "we_time";
+	public static final String col_weTemp = "we_temperature";
+	public static final String col_weReh = "we_humidity";
 	public static final String col_wePty = "we_pty";
 	public static final String col_weSky = "we_sky";
+	public static final String col_wePop = "we_pop";
 	public static final String col_weLocalcode = "we_localcode";
 	
 	public static final String tb_schedule = "ieas_schedule";
+	public static final String col_scDate = "sc_date";
+	public static final String col_scTime = "sc_time";
 	public static final String col_scAct = "sc_act";
+	public static final String col_scPriority = "sc_priority";
 	
 	public static final String tb_reservation = "ieas_reservation";
 	public static final String col_rsID = "rs_id";

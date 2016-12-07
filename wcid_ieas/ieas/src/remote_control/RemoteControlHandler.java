@@ -3,10 +3,12 @@ package remote_control;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,6 +38,7 @@ public class RemoteControlHandler extends HttpServlet {
 	private PreparedStatement getcomm_pstmt;
 	private PreparedStatement incomm_pstmt;
 	private PreparedStatement delcomm_pstmt;
+	private PreparedStatement controller_pstmt;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -53,15 +56,19 @@ public class RemoteControlHandler extends HttpServlet {
     		conn = DriverManager.getConnection(
     				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
     		getdv_pstmt = conn.prepareStatement(String.format(
-    				"SELECT (%s,%s) FROM %s m INNER %s d ON m.%s=d.%s WHERE m.%s=?",
-    				Meta_DB.col_mbKey, Meta_DB.col_dvKey, Meta_DB.tb_member, Meta_DB.tb_device,
-    				Meta_DB.col_mbKey, Meta_DB.col_mbKey, Meta_DB.col_mbID));
+    				"SELECT %s FROM %s d JOIN %s m ON d.%s=m.%s WHERE d.%s=? AND %s=?",
+    				Meta_DB.col_dvID, Meta_DB.tb_device, Meta_DB.tb_member,
+    				Meta_DB.col_mbID, Meta_DB.col_mbID, Meta_DB.col_mbID, Meta_DB.col_dvType));
     		getcomm_pstmt = conn.prepareStatement(String.format(
-    				"SELECT * FROM %s WHERE %s=?", Meta_DB.tb_schedule, Meta_DB.col_dvID));
+    				"SELECT * FROM %s WHERE %s=? ORDER BY %s asc, %s desc, %s desc", 
+    				Meta_DB.tb_schedule, Meta_DB.col_dvID,
+    				Meta_DB.col_scPriority, Meta_DB.col_scDate, Meta_DB.col_scTime));
     		incomm_pstmt = conn.prepareStatement(String.format(
-    				"INSERT INTO %s VALUES (?,?,?,?,?)", Meta_DB.tb_schedule));
+    				"INSERT INTO %s VALUES (?,?,?,?,?,?)", Meta_DB.tb_schedule));
     		delcomm_pstmt = conn.prepareStatement(String.format(
     				"DELETE FROM %s WHERE %s=?", Meta_DB.tb_schedule, Meta_DB.col_dvID));
+    		controller_pstmt = conn.prepareStatement(String.format(
+    				"INSERT INTO %s VALUES (?,?,?,?,?)", Meta_DB.tb_ControllerData));
     	}
     	catch(ClassNotFoundException e) {
     		throw new UnavailableException("Couldn't load database driver");
@@ -91,9 +98,28 @@ public class RemoteControlHandler extends HttpServlet {
 				getcomm_pstmt.setString(1, dv_id);
 				ResultSet rs = getcomm_pstmt.executeQuery();
 				if(rs.next()) {
+					DateTime dt = new DateTime("Asia/Seoul");
 					int act = rs.getInt(Meta_DB.col_scAct);
-					pw.println(String.valueOf(act));
+					int priority = rs.getInt(Meta_DB.col_scPriority);
+					Date sc_date = rs.getDate(Meta_DB.col_scDate);
+					Time sc_time = rs.getTime(Meta_DB.col_scTime);
 					
+					if(dt.getDateTimeDiff(sc_date, sc_time) > 180000l)
+						pw.println("none");
+					else {
+						if(act!=100)
+							pw.println("close");
+						else
+							pw.println("open");
+					
+						controller_pstmt.clearParameters();
+						controller_pstmt.setDate(1, dt.getDate());
+						controller_pstmt.setTime(2, dt.getTime());
+						controller_pstmt.setString(3, dv_id);
+						controller_pstmt.setInt(4, act);
+						controller_pstmt.setInt(5, priority);
+						controller_pstmt.executeUpdate();
+					}
 					delcomm_pstmt.clearParameters();
 					delcomm_pstmt.setString(1, dv_id);
 					delcomm_pstmt.executeUpdate();
@@ -130,18 +156,19 @@ public class RemoteControlHandler extends HttpServlet {
 			synchronized (lock) {
 				getdv_pstmt.clearParameters();
 				getdv_pstmt.setString(1, userID);
+				getdv_pstmt.setString(2, "controller");
 				ResultSet rs = getdv_pstmt.executeQuery();
 					
 				if(rs.next()) {
-					int mb_no = rs.getInt(Meta_DB.col_mbKey);
-					int dv_no = rs.getInt(Meta_DB.col_dvKey);
+					String dv_id = rs.getString(Meta_DB.col_dvID);
 						
 					incomm_pstmt.clearParameters();
 					incomm_pstmt.setDate(1, dt.getDate());
 					incomm_pstmt.setTime(2, dt.getTime());
-					incomm_pstmt.setInt(3, mb_no);
-					incomm_pstmt.setInt(4, dv_no);
+					incomm_pstmt.setString(3, userID);
+					incomm_pstmt.setString(4, dv_id);
 					incomm_pstmt.setInt(5, act);
+					incomm_pstmt.setInt(6, 0);
 					incomm_pstmt.executeUpdate();
 				}
 			}

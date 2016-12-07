@@ -1,34 +1,74 @@
 package environment_data_collector;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.TimerTask;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import util_core.Meta_DB;
 
-// 기상 데이터를 수집하는 Task 클래스 입니다.
-public class WeatherCollectionTask extends TimerTask {
-	public static final int INTERVAL = 3*3600*1000;
-	
-	public WeatherCollectionTask() {
-		try {
-			Class.forName(Meta_DB.driver);
-		} catch (Exception ignored) { }
-	}
-	
-	@Override
-	public void run() {
-		Connection conn = null;
-		try{
-			conn = DriverManager.getConnection(
-					Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
-			
-			// 등록된 멤버들의 localcode 정보를 가져옴
-			PreparedStatement localList_pstmt = conn.prepareStatement(String.format(
+/**
+ * Servlet implementation class WeatherCollectionTask
+ */
+@WebServlet("/WeatherCollectionTask")
+public class WeatherCollectionTask extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	Connection conn = null;
+	PreparedStatement localList_pstmt;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public WeatherCollectionTask() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public void init() throws ServletException {
+    	super.init();
+    	try {
+    		Class.forName(Meta_DB.driver);
+    		conn = DriverManager.getConnection(
+    				Meta_DB.db_url, Meta_DB.db_user, Meta_DB.db_password);
+    		localList_pstmt = conn.prepareStatement(String.format(
 					"SELECT %s FROM %s GROUP BY %s",
 					Meta_DB.col_mbLocalcode, Meta_DB.tb_member, Meta_DB.col_mbLocalcode));
+    	}
+    	catch(ClassNotFoundException e) {
+    		throw new UnavailableException("Couldn't load database driver");
+    	}
+    	catch(SQLException e){
+    		throw new UnavailableException("Couldn't get db connection");
+    	}
+    }
+    
+    @Override
+    public void destroy() {
+    	super.destroy();
+    	try {
+    		if(conn != null)
+    			conn.close();
+    	}
+    	catch (SQLException ignore) { }
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try{
+			
+			// 등록된 멤버들의 localcode 정보를 가져옴
 			localList_pstmt.clearParameters();
 			ResultSet rs = localList_pstmt.executeQuery();
 			
@@ -56,16 +96,16 @@ public class WeatherCollectionTask extends TimerTask {
 			}
 		}
 		catch(Exception e) {
-			
-		}
-		finally {
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch(Exception ignored) { }
-			}
-		}
 		
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }

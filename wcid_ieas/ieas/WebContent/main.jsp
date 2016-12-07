@@ -47,7 +47,7 @@ if(userID==null) {
 		<div><input class="btn btn-lg btn-block btn-primary" type='submit' value='Auto Control Option' 
 		onclick='this.form.action="option.jsp"' 
 		style="margin-bottom: 15px;"></div>
-		<div><input class="btn btn-lg btn-block btn-primary" type='submit' value='User Change' 
+		<div><input class="btn btn-lg btn-block btn-primary" type='submit' value='Configurations' 
 		onclick='this.form.action="change.jsp"' 
 		style="margin-bottom: 15px;"></div>
 	</form>
